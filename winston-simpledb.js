@@ -118,10 +118,6 @@ SimpleDB.prototype.log = function (level, msg, meta, callback) {
     }
     // else, nothing (should never be here)
 
-    // console.log('domainName:', domainName);
-    // console.log('itemName:', itemName);
-    // console.log('meta:', meta);
-
     // create the data to log
     var data = {
         level     : level,
