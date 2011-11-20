@@ -1,0 +1,10 @@
+var amazon = require('awssum/lib/amazon/amazon');
+
+exports = module.exports = {
+    accessKeyId : '1234567890abcdefghil',
+    secretAccessKey : '1234567890abcdefghil1234567890abcdefghil',
+    awsAccountId : '1234-1234-1234',
+    domainName : 'log',
+    region : amazon.US_EAST_1,
+    itemName : 'uuid',
+};
