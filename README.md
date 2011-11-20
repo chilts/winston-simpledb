@@ -3,18 +3,38 @@
 The winston-simpledb module allows you to log your winston messages to Amazon's SimpleDB.
 
     var SimpleDB = require('winston-simpledb').SimpleDB;
-    winston.add(SimpleDB, options);
+    
+    winston.add(winston.transports.SimpleDB, {
+        // for andychilton
+        accessKeyId : '...',
+        secretAccessKey : '...',
+        awsAccountId : 'xxxx-xxxx-xxxx',
+        domainName : 'log',
+        region : amazon.US_EAST_1,
+        itemName : 'uuid',
+    });
+
+## Options
 
 The SimpleDB transport takes the following options.
 
-    level : the log level of messages
+    accessKeyId     : your AWS access key id
+    secretAccessKey : your AWS secret access key
+    awsAccessId     : your AWS access id (of the form 'xxxx-xxxx-xxxx')
+    region          : the region where the domain is hosted (of the form amazon.US_EAST_1)
+    domainName      : the domain name to log to, or a function to generate the domain name
+    itemName        : the type of itemName to use or a function to generate the item name
 
-level: Level of messages that this transport should log.
-silent: Boolean flag indicating whether to suppress output.
-db: The name of the database you want to log to. [required]
-collection: The name of the collection you want to store log messages in, defaults to 'log'.
-safe: Boolean indicating if you want eventual consistency on your log messages, if set to true it requires an extra round trip to the server to ensure the write was committed, defaults to true.
-host: The host running MongoDB, defaults to localhost.
-port: The port on the host that MongoDB is running on, defaults to MongoDB's default port.
-Metadata: Logged as a native JSON object.
+Let's compare the domainName values:
 
+    string      -> the domain name is this literal string
+    function    -> the string that this function returns
+
+Let's compare the itemName values:
+
+    'uuid'      -> '75f38e1c-1bc6-4854-b3e2-9e6b65e9d012'
+    'epoch'     -> 1321751212043
+    'timestamp' -> '2011-11-20T01:06:52.043Z'
+    function    -> (a string that the function returns)
+
+(Ends)
