@@ -1,0 +1,36 @@
+{
+  "name": "winston-simpledb",
+  "description": "A Winston transport for Amazon SimpleDB",
+  "version": "0.1.0",
+  "author": {
+    "name":"Andrew Chilton",
+    "email":"chilts@appsattic.com",
+    "url":"http://www.appsattic.com/"
+  },
+  "homepage": "https://github.com/appsattic/winston-simpledb",
+  "contributors": [],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/appsattic/winston-simpledb.git"
+  },
+  "keywords": ["logging", "sysadmin", "tools", "winston", "amazon", "simpledb", "awssum"],
+  "dependencies": {
+    "awssum": ">= 0.1.0",
+    "uuid-js": ">= 0.7.4"
+  },
+  "devDependencies": {
+    "winston": ">= 0.5.6",
+    "vows":">= 0.5.13"
+  },
+  "main": "./winston-simpledb",
+  "scripts": {
+    "test": "vows test/*.js --spec"
+  },
+  "engines": {
+    "node": ">= 0.4.0"
+  },
+  "licenses": [{
+    "type": "MIT",
+    "url": "http://github.com/appsattic/winston-simpledb/raw/master/LICENSE"
+  }]
+}
