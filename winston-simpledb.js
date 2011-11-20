@@ -21,7 +21,7 @@ var UUID = require('uuid-js');
 // ### function SimpleDB (options)
 // Constructor for the SimpleDB transport object.
 //
-var SimpleDB = function (options) {
+var SimpleDB = exports.SimpleDB = function (options) {
     options = options || {};
 
     // need the accessKeyId
