@@ -133,11 +133,11 @@ SimpleDB.prototype.log = function (level, msg, meta, callback) {
 
 // add the meta information if there is any
 if ( meta ) {
-    values[values.length-1] = JSON.stringify(meta);
+    attributes.values[attributes.values.length-1] = JSON.stringify(meta);
 }
 
 // store the message
-this.sdb.putAttributes({
+this.sdb.PutAttributes({
     DomainName : domainName,
     ItemName   : itemName,
     AttributeName: attributes.names,
