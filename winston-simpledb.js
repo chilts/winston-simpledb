@@ -133,8 +133,6 @@ SimpleDB.prototype.log = function (level, msg, meta, callback) {
 
     // add the meta information if there is any
     if ( meta ) {
-        var m = 0;
-        var ml = 
         for(var m in meta){
             attributes.names.push(m);
             attributes.values.push(meta[m]);
