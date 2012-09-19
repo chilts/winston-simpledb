@@ -14,7 +14,7 @@
 
 var util = require('util');
 var amazon = require('awssum/lib/amazon/amazon');
-var simpledb = require('awssum/lib/amazon/simpledb');
+var sdbService = awssum.load('amazon/simpledb').SimpleDB;
 var winston = require('winston');
 var UUID = require('uuid-js');
 
@@ -66,12 +66,12 @@ var SimpleDB = exports.SimpleDB = function (options) {
     }
 
     // create the SimpleDB instance
-    this.sdb = new simpledb.SimpleDB(
+    this.sdb = new simpledb.SimpleDB({
         options.accessKeyId,
         options.secretAccessKey,
         options.awsAccountId,
         options.region
-    );
+    });
 };
 
 //
@@ -119,22 +119,22 @@ SimpleDB.prototype.log = function (level, msg, meta, callback) {
     // else, nothing (should never be here)
 
     // create the data to log
-    var data = {
-        level     : level,
-        msg       : msg,
-        inserted  : (new Date()).toISOString(),
-    };
+    var attributes = {
+        names = ['level','inserted','msg','meta'],
+        values = [level,msg,(new Date()).toISOString(),''];
+    }
 
     // add the meta information if there is any
     if ( meta ) {
-        data.meta = JSON.stringify(meta);
+        values[values.length-1] = JSON.stringify(meta);
     }
 
     // store the message
     this.sdb.putAttributes({
-        domainName : domainName,
-        itemName   : itemName,
-        data       : data,
+        DomainName : domainName,
+        ItemName   : itemName,
+        AttributeName: attributes.names,
+        AttributeValue:attributes.values
     }, function(err, data) {
         // console.log('Error: ', util.inspect(err, true, null));
         // console.log('Data: ', util.inspect(data, true, null));
