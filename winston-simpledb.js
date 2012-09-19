@@ -13,8 +13,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 var util = require('util');
-var amazon = require('awssum/lib/amazon/amazon');
-var simpledb = require('awssum/lib/amazon/simpledb');
+var awssum = require('awssum');
+var amazon = awssum.load('amazon/amazon');
+var simpledb = awssum.load('amazon/simpledb');
 var winston = require('winston');
 var UUID = require('uuid-js');
 
@@ -54,7 +55,7 @@ var SimpleDB = exports.SimpleDB = function (options) {
 
     // Winston Options
     this.name  = 'simpledb';
-    this.level = options.level || 'info';
+    this.level = options.level || 'all';
 
     // SimpleDB Options
     if (options.domainName) {
@@ -66,12 +67,12 @@ var SimpleDB = exports.SimpleDB = function (options) {
     }
 
     // create the SimpleDB instance
-    this.sdb = new simpledb.SimpleDB(
-        options.accessKeyId,
-        options.secretAccessKey,
-        options.awsAccountId,
-        options.region
-    );
+    this.sdb = new simpledb.SimpleDB({
+        'accessKeyId' : options.accessKeyId,
+        'secretAccessKey' : options.secretAccessKey,
+        'awsAccountId' : options.awsAccountId,
+        'region' : options.region
+    });
 };
 
 //
@@ -91,6 +92,12 @@ SimpleDB.prototype.log = function (level, msg, meta, callback) {
     var self = this;
 
     // console.log('RIGHT HERE - logging some stuff');
+
+    // skip when ignored level
+    if(this.level != level && this.level != 'all'){
+        callback(null,false);
+        return;
+    }
 
     // create the domainName
     var domainName;
@@ -119,22 +126,25 @@ SimpleDB.prototype.log = function (level, msg, meta, callback) {
     // else, nothing (should never be here)
 
     // create the data to log
-    var data = {
-        level     : level,
-        msg       : msg,
-        inserted  : (new Date()).toISOString(),
-    };
+    var attributes = {
+        names : ['level','inserted','msg'],
+        values : [level,(new Date()).toISOString(),msg]
+    }
 
     // add the meta information if there is any
     if ( meta ) {
-        data.meta = JSON.stringify(meta);
+        for(var m in meta){
+            attributes.names.push(m);
+            attributes.values.push(meta[m]);
+        }
     }
 
     // store the message
-    this.sdb.putAttributes({
-        domainName : domainName,
-        itemName   : itemName,
-        data       : data,
+    this.sdb.PutAttributes({
+        DomainName : domainName,
+        ItemName   : itemName,
+        AttributeName: attributes.names,
+        AttributeValue:attributes.values
     }, function(err, data) {
         // console.log('Error: ', util.inspect(err, true, null));
         // console.log('Data: ', util.inspect(data, true, null));
