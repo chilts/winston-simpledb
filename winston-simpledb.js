@@ -54,7 +54,7 @@ var SimpleDB = exports.SimpleDB = function (options) {
 
     // Winston Options
     this.name  = 'simpledb';
-    this.level = options.level || 'info';
+    this.level = options.level || 'all';
 
     // SimpleDB Options
     if (options.domainName) {
@@ -91,6 +91,12 @@ SimpleDB.prototype.log = function (level, msg, meta, callback) {
     var self = this;
 
     // console.log('RIGHT HERE - logging some stuff');
+
+    // skip when ignored level
+    if(this.level != level && this.level != 'all'){
+        callback(null,false);
+        return;
+    }
 
     // create the domainName
     var domainName;
