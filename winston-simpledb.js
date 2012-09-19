@@ -13,8 +13,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 var util = require('util');
-var amazon = require('awssum/lib/amazon/amazon');
-var sdbService = awssum.load('amazon/simpledb').SimpleDB;
+var awssum = require('awssum');
+var amazon = awssum.load('amazon/amazon');
+var simpledb = awssum.load('amazon/simpledb');
 var winston = require('winston');
 var UUID = require('uuid-js');
 
@@ -67,10 +68,10 @@ var SimpleDB = exports.SimpleDB = function (options) {
 
     // create the SimpleDB instance
     this.sdb = new simpledb.SimpleDB({
-        options.accessKeyId,
-        options.secretAccessKey,
-        options.awsAccountId,
-        options.region
+        'accessKeyId' : options.accessKeyId,
+        'secretAccessKey' : options.secretAccessKey,
+        'awsAccountId' : options.awsAccountId,
+        'region' : options.region
     });
 };
 
@@ -126,33 +127,33 @@ SimpleDB.prototype.log = function (level, msg, meta, callback) {
 
     // create the data to log
     var attributes = {
-        names = ['level','inserted','msg','meta'],
-        values = [level,msg,(new Date()).toISOString(),''];
+        names : ['level','inserted','msg','meta'],
+        values : [level,msg,(new Date()).toISOString(),'']
     }
 
-    // add the meta information if there is any
-    if ( meta ) {
-        values[values.length-1] = JSON.stringify(meta);
+// add the meta information if there is any
+if ( meta ) {
+    values[values.length-1] = JSON.stringify(meta);
+}
+
+// store the message
+this.sdb.putAttributes({
+    DomainName : domainName,
+    ItemName   : itemName,
+    AttributeName: attributes.names,
+    AttributeValue:attributes.values
+}, function(err, data) {
+    // console.log('Error: ', util.inspect(err, true, null));
+    // console.log('Data: ', util.inspect(data, true, null));
+    if (err) {
+        self.emit('error', err);
     }
 
-    // store the message
-    this.sdb.putAttributes({
-        DomainName : domainName,
-        ItemName   : itemName,
-        AttributeName: attributes.names,
-        AttributeValue:attributes.values
-    }, function(err, data) {
-        // console.log('Error: ', util.inspect(err, true, null));
-        // console.log('Data: ', util.inspect(data, true, null));
-        if (err) {
-            self.emit('error', err);
-        }
+    self.emit('logged');
+});
 
-        self.emit('logged');
-    });
-
-    // intially, tell the caller that everything was fine
-    callback(null, true);
+// intially, tell the caller that everything was fine
+callback(null, true);
 };
 
 //
